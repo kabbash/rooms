@@ -1,0 +1,48 @@
+// Rooms app — own database (PostgreSQL).
+// The connection URL lives in prisma.config.ts (Prisma 7).
+//
+// Only the rooms models exist so far, as the worked example.
+// Booking, User (identity) and calendar-sync models are intern tasks —
+// see docs/adr/0001-app-structure.md → "Bounded contexts".
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── Catalog ─────────────────────────────────────────────────────────────────
+
+enum BookingType {
+  WHOLE_ROOM      // standard meeting rooms
+  SEAT_LEVEL      // Silent Room: each seat booked independently
+  SINGLE_OCCUPANT // Silent Boxes
+}
+
+model Floor {
+  id     String @id @default(cuid())
+  number Int    @unique
+  name   String
+  rooms  Room[]
+}
+
+model Room {
+  id          String      @id @default(cuid())
+  code        String      @unique // e.g. "Maadi Office-2-1"
+  name        String? // e.g. "Cairo"
+  capacity    Int
+  bookingType BookingType
+  isActive    Boolean     @default(true)
+  sortOrder   Int         @default(0)
+  floorId     String
+  floor       Floor       @relation(fields: [floorId], references: [id])
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+// TODO(bookings): model Booking { ... }      — see docs/adr/0001-app-structure.md
+// TODO(auth): model User { ... }        — mirrored from RC Portal SSO
+// TODO(rooms): Equipment + RoomEquipment  — equipment tags on room cards

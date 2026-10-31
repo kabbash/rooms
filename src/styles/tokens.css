@@ -1,0 +1,9 @@
+/*
+ * Design tokens — Room Booking v1.1
+ * Source: Figma "Remotecoders Portal – Room Booking v1" → Color (Light/Dark),
+ * Spacing & Radius, text and effect styles. Exported 28 Oct 2026.
+ *
+ * Names mirror Figma (bg/canvas → --bg-canvas). Change values in Figma first,
+ * then update here. Components use these through Tailwind (see globals.css),
+ * never raw hex.
+ */

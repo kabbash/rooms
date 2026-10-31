@@ -1,0 +1,28 @@
+# Local Postgres for the Rooms app.
+#   Start:   docker compose up -d        (or: pnpm db:up)
+#   Stop:    docker compose down          (data is kept in the "rooms-db" volume)
+#   Reset:   docker compose down -v       (deletes all local data)
+name: rooms
+
+services:
+  db:
+    image: postgres:17-alpine
+    container_name: rooms-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: rooms
+      POSTGRES_PASSWORD: rooms
+      POSTGRES_DB: rooms
+    ports:
+      # Host port 5433 so it never clashes with a Postgres already running on your Mac (5432).
+      - "5433:5432"
+    volumes:
+      - rooms-db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U rooms -d rooms"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  rooms-db:
