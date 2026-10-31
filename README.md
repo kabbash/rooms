@@ -31,6 +31,18 @@ npm run dev            # http://localhost:3000
 | `npm run db:seed` | Re-run the seed (safe to repeat) |
 | `npm run db:studio` | Browse the database |
 
+## Environments and deployment
+
+| Environment | How code gets there | URL |
+|---|---|---|
+| **dev** | Every merge to `main` (after CI passes) | see the latest *Deploy dev* run |
+| **staging** | Actions → *Promote to staging* → Run workflow (same image as dev) | see the latest *Promote to staging* run |
+
+Every PR runs CI: migrations against an empty database, a drift check (schema changes need a migration), seed, lint, typecheck, tests, build.
+Write **backward-compatible migrations**: they run just before the new version goes live.
+
+Details and one-time cloud setup: [ADR 0003](docs/adr/0003-hosting-and-delivery.md) · [docs/infra/setup.md](docs/infra/setup.md).
+
 ## Folder structure
 
 ```

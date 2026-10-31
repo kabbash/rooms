@@ -20,10 +20,13 @@
 | Tests | **Vitest** (domain + use cases); Playwright later for flows | Domain tests need no DB or browser. |
 | Lint | **ESLint 9 flat config** (`eslint-config-next`) + two architecture rules | `next lint` was removed in Next 16; run `eslint .` directly. |
 
+## Decided later
+
+- **Hosting** → Cloud Run + Neon, deployed by GitHub Actions. See [ADR 0003](0003-hosting-and-delivery.md).
+
 ## Not decided yet
 
 - **Auth / SSO provider** for the RC Portal (OIDC? Google Workspace?) → will pick Auth.js or Better Auth once known.
-- **Hosting** (Vercel vs self-hosted).
 - **Background jobs** for calendar sync (Inngest / Trigger.dev / cron + queue).
 - **Client data fetching** (TanStack Query) — only if live availability needs polling.
 

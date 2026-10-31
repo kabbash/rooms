@@ -1,0 +1,65 @@
+# Checks every pull request. Also called by deploy-dev.yml before anything ships.
+name: CI
+
+on:
+  pull_request:
+  workflow_call:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Lint, typecheck, test, build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: rooms
+          POSTGRES_PASSWORD: rooms
+          POSTGRES_DB: rooms
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U rooms -d rooms"
+          --health-interval 5s --health-timeout 3s --health-retries 10
+
+    env:
+      DATABASE_URL: postgresql://rooms:rooms@localhost:5432/rooms?schema=public
+      NEXT_TELEMETRY_DISABLED: 1
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4 # version comes from "packageManager" in package.json
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install --frozen-lockfile # also runs `prisma generate`
+
+      - name: Migrations apply to an empty database
+        run: pnpm exec prisma migrate deploy
+
+      - name: schema.prisma has no changes missing a migration
+        run: pnpm exec prisma migrate diff --from-config-datasource --to-schema prisma/schema.prisma --exit-code
+
+      - name: Seed runs
+        run: pnpm db:seed
+
+      - name: Seed-if-empty skips a database that has data
+        run: pnpm db:seed:if-empty | tee /dev/stderr | grep -q "skipping seed"
+
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - run: pnpm test
+      - run: pnpm build

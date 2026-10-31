@@ -1,0 +1,68 @@
+# Every merge to main: run CI, build the image once, deploy it to dev.
+# The same image is later promoted to staging by promote-staging.yml.
+name: Deploy dev
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: # redeploy main by hand; to seed or reset data use "Dev database"
+
+concurrency:
+  group: deploy-dev
+  cancel-in-progress: false # never cancel a deploy half-way through a migration
+
+permissions:
+  contents: read
+  id-token: write # GitHub OIDC → Google Workload Identity Federation (no JSON keys)
+
+jobs:
+  checks:
+    uses: ./.github/workflows/ci.yml
+
+  build:
+    name: Build & push image
+    needs: checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    outputs:
+      image: ${{ steps.ref.outputs.image }}
+    env:
+      IMAGE: ${{ vars.GCP_REGION }}-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/rooms/app
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars.GCP_WIF_PROVIDER }}
+          service_account: ${{ vars.GCP_DEPLOYER_SA }}
+
+      - uses: google-github-actions/setup-gcloud@v2
+
+      - name: Log Docker in to Artifact Registry
+        run: gcloud auth configure-docker "${{ vars.GCP_REGION }}-docker.pkg.dev" --quiet
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Build and push
+        id: push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ env.IMAGE }}:${{ github.sha }}
+          labels: org.opencontainers.image.revision=${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Image reference (pinned by digest)
+        id: ref
+        run: echo "image=${IMAGE}@${{ steps.push.outputs.digest }}" >> "$GITHUB_OUTPUT"
+
+  deploy:
+    needs: build
+    uses: ./.github/workflows/_deploy.yml
+    with:
+      environment: dev
+      image: ${{ needs.build.outputs.image }}
+      git_sha: ${{ github.sha }}
+      seed_if_empty: true # first deploy only; existing dev data is never touched

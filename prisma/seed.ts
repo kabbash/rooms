@@ -18,6 +18,13 @@ const floor2: { code: string; name: string | null; capacity: number; bookingType
 ];
 
 async function main() {
+  // `--if-empty` (used on every cloud deploy): only seed a brand-new database, so data
+  // the team entered on dev survives deploys. Re-seed on purpose with plain `db:seed`.
+  if (process.argv.includes("--if-empty") && (await prisma.floor.count()) > 0) {
+    console.log("Database already has data, skipping seed.");
+    return;
+  }
+
   // Floor 1 is an open item in the proposal (names/capacities not shared yet).
   await prisma.floor.upsert({ where: { number: 1 }, update: {}, create: { number: 1, name: "Floor 1" } });
   const f2 = await prisma.floor.upsert({ where: { number: 2 }, update: {}, create: { number: 2, name: "Floor 2" } });
