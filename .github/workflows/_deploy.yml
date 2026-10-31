@@ -1,0 +1,109 @@
+# Shared deploy steps for dev and staging. Not triggered directly.
+#   1. migrate the environment's database (migrations from the same commit as the image)
+#   2. deploy the image to Cloud Run service rooms-<environment>
+#   3. smoke-test /api/health and check the expected commit is serving
+name: _deploy
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        description: "dev | staging"
+        required: true
+        type: string
+      image:
+        description: "Full image reference pinned by digest"
+        required: true
+        type: string
+      git_sha:
+        required: true
+        type: string
+      seed_if_empty:
+        description: "Seed only when the database has no data yet (brand-new environment)"
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  deploy:
+    name: Deploy to ${{ inputs.environment }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment:
+      name: ${{ inputs.environment }}
+      url: ${{ steps.deploy.outputs.url }}
+    env:
+      SERVICE: rooms-${{ inputs.environment }}
+      REGION: ${{ vars.GCP_REGION }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.git_sha }}
+
+      - uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars.GCP_WIF_PROVIDER }}
+          service_account: ${{ vars.GCP_DEPLOYER_SA }}
+
+      - uses: google-github-actions/setup-gcloud@v2
+
+      # ── 1. Database ─────────────────────────────────────────────────────────
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Fetch direct (non-pooled) database URL for migrations
+        run: |
+          url="$(gcloud secrets versions access latest --secret="${SERVICE}-database-url-direct")"
+          echo "::add-mask::${url}"
+          echo "DATABASE_URL=${url}" >> "$GITHUB_ENV"
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Apply migrations
+        run: pnpm exec prisma migrate deploy
+
+      - name: Seed (only if the database is empty)
+        if: inputs.seed_if_empty
+        run: pnpm db:seed:if-empty
+
+      # ── 2. Cloud Run ────────────────────────────────────────────────────────
+      - name: Deploy to Cloud Run
+        id: deploy
+        env:
+          IMAGE: ${{ inputs.image }}
+          RUNTIME_SA: ${{ vars.GCP_RUNTIME_SA }}
+          PORTAL_URL: ${{ vars.PORTAL_URL || 'https://portal.remotecoders.org' }}
+          BASIC_AUTH_USER: ${{ vars.BASIC_AUTH_USER || 'remotecoders' }}
+          SHA: ${{ inputs.git_sha }}
+        run: |
+          gcloud run deploy "$SERVICE" \
+            --image "$IMAGE" \
+            --region "$REGION" \
+            --service-account "$RUNTIME_SA" \
+            --allow-unauthenticated \
+            --port 8080 \
+            --cpu 1 --memory 512Mi \
+            --min-instances 0 --max-instances 2 \
+            --set-env-vars "PORTAL_URL=${PORTAL_URL},OFFICE_TIMEZONE=Africa/Cairo,COMMIT_SHA=${SHA},BASIC_AUTH_USER=${BASIC_AUTH_USER}" \
+            --set-secrets "DATABASE_URL=${SERVICE}-database-url:latest,BASIC_AUTH_PASSWORD=${SERVICE}-basic-auth-password:latest" \
+            --update-labels "commit=${SHA}" \
+            --quiet
+
+          url="$(gcloud run services describe "$SERVICE" --region "$REGION" --format='value(status.url)')"
+          echo "url=${url}" >> "$GITHUB_OUTPUT"
+
+      # ── 3. Smoke test ───────────────────────────────────────────────────────
+      - name: Smoke test /api/health
+        env:
+          URL: ${{ steps.deploy.outputs.url }}
+          SHA: ${{ inputs.git_sha }}
+        run: |
+          body="$(curl --fail --silent --show-error --retry 6 --retry-delay 5 --retry-all-errors "${URL}/api/health")"
+          echo "$body"
+          echo "$body" | jq -e --arg sha "$SHA" '.status == "ok" and .commit == $sha' > /dev/null
+          echo "✅ \`${SHA}\` is live on **${{ inputs.environment }}** → ${URL}" >> "$GITHUB_STEP_SUMMARY"

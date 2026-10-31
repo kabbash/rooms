@@ -1,0 +1,76 @@
+# Ship to staging for the product owner. Never rebuilds: it deploys the exact
+# image that already ran on dev.
+#
+#   - Actions → "Promote to staging" → Run workflow  (blank = whatever is on dev now)
+#   - or push a tag:  git tag v0.3.0 && git push origin v0.3.0
+name: Promote to staging
+
+on:
+  workflow_dispatch:
+    inputs:
+      sha:
+        description: "Commit to promote (leave blank for the commit currently on dev)"
+        required: false
+        type: string
+  push:
+    tags: ["v*"]
+
+concurrency:
+  group: deploy-staging
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  resolve:
+    name: Find the dev image
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      image: ${{ steps.find.outputs.image }}
+      sha: ${{ steps.find.outputs.sha }}
+    env:
+      IMAGE: ${{ vars.GCP_REGION }}-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/rooms/app
+      REGION: ${{ vars.GCP_REGION }}
+    steps:
+      - uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars.GCP_WIF_PROVIDER }}
+          service_account: ${{ vars.GCP_DEPLOYER_SA }}
+
+      - uses: google-github-actions/setup-gcloud@v2
+
+      - name: Resolve commit and image digest
+        id: find
+        env:
+          INPUT_SHA: ${{ inputs.sha }}
+        run: |
+          if [ "${GITHUB_EVENT_NAME}" = "push" ]; then
+            sha="${GITHUB_SHA}"
+          elif [ -n "${INPUT_SHA}" ]; then
+            sha="${INPUT_SHA}"
+          else
+            sha="$(gcloud run services describe rooms-dev --region "$REGION" --format='value(metadata.labels.commit)')"
+          fi
+          if [ -z "$sha" ]; then echo "::error::Could not work out which commit to promote"; exit 1; fi
+
+          digest="$(gcloud artifacts docker images describe "${IMAGE}:${sha}" --format='value(image_summary.digest)' 2>/dev/null || true)"
+          if [ -z "$digest" ]; then
+            echo "::error::No image for ${sha}. Only commits that were deployed to dev (merged to main) can be promoted."
+            exit 1
+          fi
+
+          echo "sha=${sha}" >> "$GITHUB_OUTPUT"
+          echo "image=${IMAGE}@${digest}" >> "$GITHUB_OUTPUT"
+          echo "Promoting \`${sha}\` → staging (\`${digest}\`)" >> "$GITHUB_STEP_SUMMARY"
+
+  deploy:
+    needs: resolve
+    uses: ./.github/workflows/_deploy.yml
+    with:
+      environment: staging
+      image: ${{ needs.resolve.outputs.image }}
+      git_sha: ${{ needs.resolve.outputs.sha }}
+      seed_if_empty: true # the room inventory, first promotion only
