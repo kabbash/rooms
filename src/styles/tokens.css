@@ -1,9 +1,201 @@
 /*
  * Design tokens — Room Booking v1.1
- * Source: Figma "Remotecoders Portal – Room Booking v1" → Color (Light/Dark),
- * Spacing & Radius, text and effect styles. Exported 28 Oct 2026.
+ * Source: Figma "Remotecoders Portal – Room Booking v1" → Color (Primitives + Semantic Light),
+ * Spacing & Radius, and typography styles. Exported 28 Oct 2026.
  *
- * Names mirror Figma (bg/canvas → --bg-canvas). Change values in Figma first,
+ * Names mirror Figma (bg/canvas → --color-bg-canvas). Change values in Figma first,
  * then update here. Components use these through Tailwind (see globals.css),
  * never raw hex.
  */
+
+:root {
+  /* =================================
+     1. Primitive Colors
+  ================================= */
+
+  /* Green */
+  --color-green-50: #ecf7f3;
+  --color-green-100: #d5eee5;
+  --color-green-300: #8ccbb5;
+  --color-green-500: #449a82;
+  --color-green-600: #36836d;
+  --color-green-700: #1f6b55;
+
+  /* Neutral */
+  --color-neutral-0: #ffffff;
+  --color-neutral-25: #fcfbf7;
+  --color-neutral-50: #f7f6f2;
+  --color-neutral-100: #efeee9;
+  --color-neutral-200: #e5e4df;
+  --color-neutral-300: #d4d3cd;
+  --color-neutral-400: #9ca3af;
+  --color-neutral-500: #6b7280;
+  --color-neutral-600: #4b5563;
+  --color-neutral-700: #374151;
+  --color-neutral-900: #111827;
+
+  /* Amber */
+  --color-amber-50: #fff8e7;
+  --color-amber-200: #fbe3a6;
+  --color-amber-600: #b45309;
+
+  /* Red */
+  --color-red-50: #fef2f2;
+  --color-red-200: #fecaca;
+  --color-red-600: #dc2626;
+  --color-red-700: #b91c1c;
+
+  /* Violet */
+  --color-violet-50: #eef0ff;
+  --color-violet-600: #4f46e5;
+
+  /* Charcoal */
+  --color-charcoal-800: #3a3a3a;
+
+  /* Scrim */
+  --color-scrim-light: rgb(17 24 39 / 45%);
+  --color-scrim-dark: rgb(0 0 0 / 60%);
+
+  /* Night */
+  --color-night-100: #f3f4f1;
+  --color-night-300: #c2c7c3;
+  --color-night-400: #9aa29d;
+  --color-night-600: #3b4641;
+  --color-night-700: #2c3531;
+  --color-night-750: #2a322e;
+  --color-night-800: #232c28;
+  --color-night-850: #1c2420;
+  --color-night-900: #161d1a;
+  --color-night-950: #0e1412;
+  --color-night-green-900: #12302a;
+  --color-night-green-700: #2f5f50;
+  --color-night-green-400: #5fb89c;
+  --color-night-green-300: #7fd1b6;
+  --color-night-amber-900: #2e2410;
+  --color-night-amber-700: #6b4e1a;
+  --color-night-amber-300: #f5b759;
+  --color-night-red-900: #351616;
+  --color-night-red-700: #7f2626;
+  --color-night-red-300: #f87171;
+  --color-night-violet-900: #1e1f3d;
+  --color-night-violet-300: #a5b4fc;
+
+  /* =================================
+     2. Semantic Colors — Light Mode
+  ================================= */
+
+  /* Background */
+  --color-bg-canvas: var(--color-neutral-25);
+  --color-bg-surface: var(--color-neutral-0);
+  --color-bg-subtle: var(--color-neutral-50);
+  --color-bg-muted: var(--color-neutral-100);
+  --color-bg-brand: var(--color-green-600);
+  --color-bg-brand-hover: var(--color-green-700);
+  --color-bg-brand-subtle: var(--color-green-50);
+  --color-bg-warning-subtle: var(--color-amber-50);
+  --color-bg-danger-subtle: var(--color-red-50);
+  --color-bg-info-subtle: var(--color-violet-50);
+  --color-bg-disabled: var(--color-neutral-200);
+  --color-bg-inverse: var(--color-neutral-900);
+  --color-bg-overlay: var(--color-scrim-light);
+
+  /* Text */
+  --color-text-primary: var(--color-neutral-900);
+  --color-text-secondary: var(--color-neutral-600);
+  --color-text-tertiary: var(--color-neutral-500);
+  --color-text-on-brand: var(--color-neutral-0);
+  --color-text-brand: var(--color-green-700);
+  --color-text-warning: var(--color-amber-600);
+  --color-text-danger: var(--color-red-700);
+  --color-text-info: var(--color-violet-600);
+  --color-text-on-inverse: var(--color-neutral-0);
+  --color-text-on-inverse-muted: var(--color-neutral-300);
+
+  /* Border */
+  --color-border-default: var(--color-neutral-200);
+  --color-border-strong: var(--color-neutral-300);
+  --color-border-brand: var(--color-green-500);
+  --color-border-brand-subtle: var(--color-green-300);
+  --color-border-warning: var(--color-amber-200);
+  --color-border-danger: var(--color-red-200);
+
+  /* Icon */
+  --color-icon-brand: var(--color-green-500);
+
+  /* =================================
+     3. Spacing
+  ================================= */
+
+  --spacing-2xs: 4px;
+  --spacing-xs: 8px;
+  --spacing-sm: 12px;
+  --spacing-md: 16px;
+  --spacing-lg: 20px;
+  --spacing-xl: 24px;
+  --spacing-2xl: 32px;
+  --spacing-3xl: 48px;
+
+  /* =================================
+     4. Radius
+  ================================= */
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-full: 999px;
+
+  /* =================================
+   5. Typography
+================================= */
+
+  --font-family: "Roboto", sans-serif;
+
+  /* Display / Lg */
+  --text-display-lg-size: 32px;
+  --text-display-lg-line-height: 40px;
+  --text-display-lg-weight: 700;
+  --text-display-lg-letter-spacing: -0.5px;
+
+  /* Heading / H1 */
+  --text-heading-h1-size: 24px;
+  --text-heading-h1-line-height: 32px;
+  --text-heading-h1-weight: 700;
+  --text-heading-h1-letter-spacing: -0.25px;
+
+  /* Heading / H2 */
+  --text-heading-h2-size: 20px;
+  --text-heading-h2-line-height: 28px;
+  --text-heading-h2-weight: 600;
+
+  /* Heading / H3 */
+  --text-heading-h3-size: 16px;
+  --text-heading-h3-line-height: 24px;
+  --text-heading-h3-weight: 600;
+
+  /* Body / Md */
+  --text-body-md-size: 16px;
+  --text-body-md-line-height: 24px;
+  --text-body-md-weight: 400;
+
+  /* Body / Sm */
+  --text-body-sm-size: 14px;
+  --text-body-sm-line-height: 20px;
+  --text-body-sm-weight: 400;
+
+  /* Label Md */
+  --text-label-md-size: 14px;
+  --text-label-md-line-height: 20px;
+  --text-label-md-weight: 500;
+
+  /* Label Sm */
+  --text-label-sm-size: 12px;
+  --text-label-sm-line-height: 16px;
+  --text-label-sm-weight: 500;
+
+  /* Overline */
+  --text-overline-size: 12px;
+  --text-overline-line-height: 16px;
+  --text-overline-weight: 600;
+  --text-overline-letter-spacing: 1.2px;
+  --text-overline-transform: uppercase;
+}
