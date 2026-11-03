@@ -1,3 +1,6 @@
+// For more info, see https://github.com/storybookjs/eslint-plugin-storybook#configuration-flat-config-format
+import storybook from "eslint-plugin-storybook";
+
 import { defineConfig, globalIgnores } from "eslint/config";
 import nextVitals from "eslint-config-next/core-web-vitals";
 import nextTs from "eslint-config-next/typescript";
@@ -44,28 +47,12 @@ const DOMAIN_IN_DESIGN_SYSTEM = {
 
 const restrict = (...patterns) => ({ "no-restricted-imports": ["error", { patterns }] });
 
-export default defineConfig([
-  ...nextVitals,
-  ...nextTs,
-
-  // Entry points
-  { files: ["src/app/**/*.{ts,tsx}"], rules: restrict(DB, REPOSITORIES) },
-  { files: ["src/domain/**/actions/**/*.ts"], rules: restrict(DB, REPOSITORIES, COMPONENTS) },
-
-  // Domain
-  // A use case never calls another use case.
-  { files: ["src/domain/**/use-cases/**/*.ts"], rules: restrict(DB, USE_CASES, ACTIONS, COMPONENTS, FRAMEWORK) },
-  {
-    files: ["src/domain/**/*.rules.ts", "src/domain/**/*.types.ts"],
-    rules: restrict(DB, REPOSITORIES, USE_CASES, ACTIONS, COMPONENTS, FRAMEWORK),
-  },
-
-  // Data access
-  { files: ["src/repositories/**/*.ts"], rules: restrict(USE_CASES, ACTIONS, COMPONENTS, FRAMEWORK) },
-
-  // UI (the design-system block comes last so it overrides the general one)
-  { files: ["src/components/**/*.tsx"], rules: restrict(DB, REPOSITORIES, USE_CASES) },
-  { files: ["src/components/ui/**/*.tsx"], rules: restrict(DB, REPOSITORIES, USE_CASES, DOMAIN_IN_DESIGN_SYSTEM) },
-
-  globalIgnores([".next/**", "out/**", "build/**", "next-env.d.ts", "src/generated/**"]),
-]);
+export default defineConfig([...nextVitals, ...nextTs, // Entry points
+{ files: ["src/app/**/*.{ts,tsx}"], rules: restrict(DB, REPOSITORIES) }, { files: ["src/domain/**/actions/**/*.ts"], rules: restrict(DB, REPOSITORIES, COMPONENTS) }, // Domain
+// A use case never calls another use case.
+{ files: ["src/domain/**/use-cases/**/*.ts"], rules: restrict(DB, USE_CASES, ACTIONS, COMPONENTS, FRAMEWORK) }, {
+  files: ["src/domain/**/*.rules.ts", "src/domain/**/*.types.ts"],
+  rules: restrict(DB, REPOSITORIES, USE_CASES, ACTIONS, COMPONENTS, FRAMEWORK),
+}, // Data access
+{ files: ["src/repositories/**/*.ts"], rules: restrict(USE_CASES, ACTIONS, COMPONENTS, FRAMEWORK) }, // UI (the design-system block comes last so it overrides the general one)
+{ files: ["src/components/**/*.tsx"], rules: restrict(DB, REPOSITORIES, USE_CASES) }, { files: ["src/components/ui/**/*.tsx"], rules: restrict(DB, REPOSITORIES, USE_CASES, DOMAIN_IN_DESIGN_SYSTEM) }, globalIgnores([".next/**", "out/**", "build/**", "next-env.d.ts", "src/generated/**"]), ...storybook.configs["flat/recommended"]]);

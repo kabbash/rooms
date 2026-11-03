@@ -19,3 +19,6 @@ src/generated/
 .DS_Store
 coverage/
 npm-debug.log*
+
+*storybook.log
+storybook-static
