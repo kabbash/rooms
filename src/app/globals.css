@@ -77,12 +77,6 @@
   --text-label-sm--line-height: var(--text-label-sm-line-height);
   --text-label-sm--font-weight: var(--text-label-sm-weight);
 
-  --text-overline: var(--text-overline-size);
-  --text-overline--line-height: var(--text-overline-line-height);
-  --text-overline--font-weight: var(--text-overline-weight);
-  --text-overline--letter-spacing: var(--text-overline-letter-spacing);
-  --text-overline--text-transform: var(--text-overline-transform);
-
   /* Border Radius */
   --radius-sm: var(--token-radius-sm);
   --radius-md: var(--token-radius-md);
@@ -104,4 +98,12 @@
   box-shadow:
     0 0 0 2px var(--color-focus-inner),
     0 0 0 4px var(--color-focus-outer);
+}
+
+@utility text-overline {
+  font-size: var(--text-overline-size);
+  line-height: var(--text-overline-line-height);
+  font-weight: var(--text-overline-weight);
+  letter-spacing: var(--text-overline-letter-spacing);
+  text-transform: var(--text-overline-transform);
 }
