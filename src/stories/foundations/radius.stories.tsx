@@ -2,9 +2,9 @@ import { useEffect, useRef, useState } from "react";
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 
 type Radius = {
-  name: string; // اسم Figma
-  cssVar: string; // من tokens.css
-  utility: string; // من globals.css
+  name: string;
+  cssVar: string;
+  utility: string;
 };
 
 const radii: Radius[] = [
@@ -22,7 +22,6 @@ function RadiusBox({ name, cssVar, utility }: Radius) {
   const ref = useRef<HTMLDivElement>(null);
   const [value, setValue] = useState("");
 
-  // نقرا قيمة الـ variable نفسها، مش رقم منسوخ
   useEffect(() => {
     if (ref.current) {
       setValue(getComputedStyle(ref.current).getPropertyValue(cssVar).trim());
@@ -31,7 +30,6 @@ function RadiusBox({ name, cssVar, utility }: Radius) {
 
   return (
     <div style={{ width: 160 }}>
-      {/* الحجم بـ style، والاستدارة بالـ utility الحقيقي */}
       <div
         ref={ref}
         className={`border border-line-brand bg-brand-subtle ${utility}`}
