@@ -62,6 +62,7 @@
     "playwright": "latest",
     "prisma": "^7.0.0",
     "storybook": "^10.6.5",
+    "storybook-addon-pseudo-states": "^10.6.6",
     "tailwindcss": "^4.1.0",
     "tsx": "^4.20.0",
     "typescript": "^5.9.0",
