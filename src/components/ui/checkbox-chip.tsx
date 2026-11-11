@@ -1,4 +1,5 @@
-import type { ComponentProps, ReactNode } from "react";
+import type { ComponentProps } from "react";
+import { Icon, type IconName } from "@/components/ui/icon";
 import { cn } from "@/lib/cn";
 
 export interface CheckboxChipProps extends Omit<
@@ -6,7 +7,7 @@ export interface CheckboxChipProps extends Omit<
   "type" | "checked" | "className"
 > {
   checked: boolean;
-  icon: ReactNode;
+  icon: IconName;
   label: string;
   className?: string;
 }
@@ -57,7 +58,7 @@ export function CheckboxChip({
       </span>
 
       <span aria-hidden="true" className="flex shrink-0 items-center">
-        {icon}
+        <Icon name={icon} size={20} />
       </span>
 
       <span>{label}</span>

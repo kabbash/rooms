@@ -1,4 +1,5 @@
-import type { ComponentProps, ReactNode } from "react";
+import type { ComponentProps } from "react";
+import { Icon, type IconName } from "@/components/ui/icon";
 import { cn } from "@/lib/cn";
 
 export interface RadioCardProps extends Omit<
@@ -8,7 +9,7 @@ export interface RadioCardProps extends Omit<
   value: string;
   title: string;
   description: string;
-  icon: ReactNode;
+  icon: IconName;
   className?: string;
 }
 
@@ -37,7 +38,7 @@ export function RadioCard({
           aria-hidden="true"
           className="flex size-5 items-center text-fg-secondary group-has-[:checked]:text-icon-brand group-has-[:disabled]:text-fg-tertiary"
         >
-          {icon}
+          <Icon name={icon} size={20} />
         </span>
 
         <span className="flex flex-col gap-0.5">
