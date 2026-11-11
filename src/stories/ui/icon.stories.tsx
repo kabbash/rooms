@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import { Icon, type IconName } from "./icon";
+import { Icon, type IconName } from "../../components/ui/icon";
 
 const iconNames: IconName[] = [
   "users",

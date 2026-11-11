@@ -67,7 +67,7 @@ const iconMap = {
 
 export type IconName = keyof typeof iconMap;
 
-export type IconSize = 14 | 16 | 18 | 20 | 22 | 24;
+type IconSize = 14 | 16 | 18 | 20 | 22 | 24;
 
 type IconProps = {
   name: IconName;
