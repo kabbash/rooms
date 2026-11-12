@@ -1,6 +1,6 @@
 @import "tailwindcss";
 @import "../styles/tokens.css";
-
+@source "../components";
 @theme inline {
   /* Background colors */
   --color-canvas: var(--color-bg-canvas);
