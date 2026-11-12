@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import { Button } from "./button";
+import { Button } from "../../components/ui/button";
 
 const meta = {
   title: "UI/Button",
@@ -192,7 +192,6 @@ export const PrimaryMdAsLink: Story = {
     variant: "primary",
     size: "md",
     asChild: true,
-    //loading: true,
     children: <a href="/rooms">Book Room</a>,
   },
 };

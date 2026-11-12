@@ -5,7 +5,7 @@ import { cn } from "@/lib/cn";
 
 /** Shared primitive mirroring the Figma "Button" component. Token classes only — no raw colors. */
 const button = cva(
-  "inline-flex items-center justify-center gap-2 rounded-md text-label-md transition-colors disabled:pointer-events-none disabled:bg-disabled disabled:text-fg-tertiary",
+  "inline-flex items-center justify-center gap-2 rounded-md text-label-md transition-colors cursor-pointer disabled:pointer-events-none disabled:cursor-not-allowed disabled:bg-disabled disabled:text-fg-tertiary",
   {
     variants: {
       variant: {
@@ -60,7 +60,7 @@ export function Button({
       className: cn(
         buttonClassName,
         (disabled || loading) &&
-          "pointer-events-none bg-disabled text-fg-tertiary",
+          "pointer-events-none cursor-not-allowed bg-disabled text-fg-tertiary",
         child.props.className,
       ),
       "aria-busy": loading || undefined,
