@@ -9,8 +9,8 @@ import {
   ToastSuccessIcon,
   ToastTitle,
   ToastViewport,
-} from "./toast";
-
+} from "../../components/ui/toast";
+import { Icon } from "../../components/ui/icon";
 function ToastDemo() {
   const [open, setOpen] = useState(false);
 
@@ -31,9 +31,9 @@ function ToastDemo() {
         className="rounded-lg border border-line-strong bg-inverse p-4 shadow-lg"
       >
         {" "}
-        <ToastContent>
+        <ToastContent className="items-center">
+          {" "}
           <ToastSuccessIcon />
-
           <div className="min-w-0 flex-1">
             <ToastTitle className="text-label-md text-fg-on-inverse">
               Room created successfully
@@ -43,12 +43,11 @@ function ToastDemo() {
               Your new room is ready to use.
             </ToastDescription>
           </div>
-
           <ToastClose
             aria-label="Close notification"
-            className="rounded-sm px-1 text-fg-on-inverse-muted hover:text-fg-on-inverse focus-visible:focus-ring"
+            className="inline-flex shrink-0 cursor-pointer items-center justify-center text-fg-on-inverse focus-visible:focus-ring"
           >
-            ×
+            <Icon name="x" size={16} />
           </ToastClose>
         </ToastContent>
       </Toast>

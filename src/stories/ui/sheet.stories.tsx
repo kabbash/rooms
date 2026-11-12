@@ -9,7 +9,7 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "./sheet";
+} from "../../components/ui/sheet";
 
 const meta = {
   title: "UI/Sheet",

@@ -3,7 +3,7 @@
 import * as ToastPrimitive from "@radix-ui/react-toast";
 import type { ComponentPropsWithoutRef } from "react";
 import { cn } from "@/lib/cn";
-
+import { Icon } from "./icon";
 // Provider
 export const ToastProvider = ToastPrimitive.Provider;
 
@@ -46,11 +46,8 @@ export function ToastContent({ className, ...props }: ToastContentProps) {
 // Success icon
 export function ToastSuccessIcon() {
   return (
-    <span
-      aria-hidden="true"
-      className="flex size-6 shrink-0 items-center justify-center rounded-full bg-fg-on-inverse text-inverse"
-    >
-      ✓
+    <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-brand">
+      <Icon name="check" size={16} className="text-fg-on-brand" />
     </span>
   );
 }

@@ -3,6 +3,7 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import type { ComponentPropsWithoutRef } from "react";
 import { cn } from "@/lib/cn";
+import { Icon } from "./icon";
 
 // Root
 export const Sheet = Dialog.Root;
@@ -89,7 +90,7 @@ export function SheetContent({
       >
         {/* Mobile handle */}
         <div
-          className="mx-auto mt-3 h-1 w-10 rounded-full bg-line-strong sm:hidden"
+          className="mx-auto mt-3 border-t-4 w-10 rounded-full border-line-strong sm:hidden"
           aria-hidden="true"
         />
 
@@ -99,9 +100,9 @@ export function SheetContent({
           <Dialog.Close
             type="button"
             aria-label="Close"
-            className="absolute right-4 top-4 inline-flex size-8 items-center justify-center rounded-sm text-fg-secondary hover:bg-muted focus-visible:focus-ring"
+            className="absolute right-6 top-9 inline-flex size-8 cursor-pointer items-center justify-center rounded-sm bg-muted text-fg-secondary focus-visible:focus-ring sm:top-5"
           >
-            <span aria-hidden="true">×</span>
+            <Icon name="x" size={20} />
           </Dialog.Close>
         )}
       </Dialog.Content>

@@ -9,7 +9,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "./alert-dialog";
+} from "../../components/ui/alert-dialog";
+import { Icon } from "../../components/ui/icon";
 
 const meta = {
   title: "UI/AlertDialog",
@@ -34,14 +35,21 @@ export const DeleteRoom: Story = {
       </AlertDialogTrigger>
 
       <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle className="text-h2 text-fg">
-            Delete this room?
-          </AlertDialogTitle>
+        <AlertDialogHeader className="flex flex-row items-start gap-3">
+          <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-danger-subtle">
+            <Icon name="alert-triangle" size={20} className="text-fg-danger" />
+          </div>
 
-          <AlertDialogDescription className="text-body-sm text-fg-secondary">
-            This action cannot be undone. The room will be permanently deleted.
-          </AlertDialogDescription>
+          <div className="flex flex-col gap-2">
+            <AlertDialogTitle className="text-h2 text-fg">
+              Delete this room?
+            </AlertDialogTitle>
+
+            <AlertDialogDescription className="text-body-sm text-fg-secondary">
+              This action cannot be undone. The room will be permanently
+              deleted.
+            </AlertDialogDescription>
+          </div>
         </AlertDialogHeader>
 
         <AlertDialogFooter className="mt-6">
