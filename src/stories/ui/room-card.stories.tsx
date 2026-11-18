@@ -60,7 +60,7 @@ export const YourBooking: Story = {
     floor: 2,
     booking: {
       holder: "You",
-      avatarName: "Alex Kamel", // mock name, gives the "AK" initials
+      avatarName: "Alex Kamel",
       start: "13:00",
       end: "14:00",
       duration: "1h",
