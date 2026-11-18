@@ -47,13 +47,20 @@ export function Tabs({
 
     event.preventDefault();
 
-    while (items[nextIndex]?.disabled) {
-      if (event.key === "ArrowLeft") {
+    let attempts = 0;
+
+    while (items[nextIndex]?.disabled && attempts < items.length) {
+      if (event.key === "ArrowLeft" || event.key === "End") {
         nextIndex = (nextIndex - 1 + items.length) % items.length;
       } else {
         nextIndex = (nextIndex + 1) % items.length;
       }
+
+      attempts++;
     }
+
+    // Stop if all tabs are disabled.
+    if (attempts === items.length || items[nextIndex]?.disabled) return;
 
     tabRefs.current[nextIndex]?.focus();
     const nextTab = items[nextIndex];
