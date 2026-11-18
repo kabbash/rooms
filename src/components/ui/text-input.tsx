@@ -51,8 +51,7 @@ export function TextInput({
             ? "border-line-danger"
             : "border-line has-[:focus-visible]:border-line-brand",
           "has-[:focus-visible]:focus-ring",
-          disabled &&
-            "cursor-not-allowed border-2 border-line-default bg-subtle",
+          disabled && "cursor-not-allowed border border-line-default bg-subtle",
         )}
       >
         {icon && <Icon name={icon} size={18} className="text-fg-secondary" />}

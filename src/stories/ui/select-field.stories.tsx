@@ -3,6 +3,19 @@ import { useArgs } from "storybook/preview-api";
 import { SelectField } from "@/components/ui/select-field";
 import { useState } from "react";
 
+const timeOptions = [];
+
+for (let minutes = 9 * 60; minutes <= 18 * 60; minutes += 30) {
+  const hours = Math.floor(minutes / 60);
+  const remainingMinutes = minutes % 60;
+
+  const label = `${String(hours).padStart(2, "0")}:${String(
+    remainingMinutes,
+  ).padStart(2, "0")}`;
+
+  timeOptions.push({ label, value: label });
+}
+
 const meta = {
   title: "UI/SelectField",
   component: SelectField,
@@ -42,7 +55,8 @@ export const DisabledDate: Story = {
 
 export const Time: Story = {
   args: {
-    type: "time",
+    type: "select",
+    options: timeOptions,
     label: "Start",
     icon: "clock",
     value: "13:30",
@@ -52,7 +66,7 @@ export const Time: Story = {
     const [end, setEnd] = useState("14:30");
 
     return (
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-3 max-w-md">
         <SelectField
           {...args}
           label="Start"
