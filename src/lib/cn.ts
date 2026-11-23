@@ -16,6 +16,9 @@ const twMerge = extendTailwindMerge({
         "overline",
       ],
     },
+    classGroups: {
+      "font-size": ["text-label-sm"],
+    },
   },
 });
 

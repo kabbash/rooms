@@ -74,6 +74,7 @@ type IconProps = {
   size?: IconSize;
   strokeWidth?: number;
   className?: string;
+  style?: React.CSSProperties;
   label?: string;
 };
 
@@ -82,6 +83,7 @@ export function Icon({
   size = 20,
   strokeWidth = 2,
   className,
+  style,
   label,
 }: IconProps) {
   const IconComponent = iconMap[name];
@@ -92,6 +94,7 @@ export function Icon({
       strokeWidth={strokeWidth}
       color="currentColor"
       className={cn("shrink-0", className)}
+      style={style}
       aria-hidden={label ? undefined : true}
       role={label ? "img" : undefined}
       aria-label={label}
