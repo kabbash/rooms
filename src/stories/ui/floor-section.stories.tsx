@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import { FloorSection } from "./floor-section";
+import { FloorSection } from "../../components/rooms/floor-section";
 
 const meta = {
   title: "Rooms/FloorSection",

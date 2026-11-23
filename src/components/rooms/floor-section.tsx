@@ -7,7 +7,7 @@ export function FloorSection({ floor }: { floor: FloorDto }) {
       <h2 className="text-h2">Floor {floor.floorNumber}</h2>
       <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {floor.rooms.map((room) => (
-          <RoomCard key={room.id} room={room} />
+          <RoomCard key={room.id} room={room} floor={floor.floorNumber} />
         ))}
       </div>
     </section>
