@@ -8,6 +8,7 @@ type AvatarProps = {
   src?: string;
   name: string;
   size?: AvatarSize;
+  className?: string;
 };
 
 const avatarFontSizes: Record<AvatarSize, number> = {
@@ -27,7 +28,7 @@ function getInitials(name: string) {
     .toUpperCase();
 }
 
-export function Avatar({ src, name, size = 40 }: AvatarProps) {
+export function Avatar({ src, name, size = 40, className }: AvatarProps) {
   const [imageError, setImageError] = useState(false);
 
   const showImage = src && !imageError;
@@ -37,6 +38,7 @@ export function Avatar({ src, name, size = 40 }: AvatarProps) {
       style={{ width: size, height: size }}
       className={cn(
         "inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full aspect-square box-border bg-subtle text-fg-secondary font-sans font-medium",
+        className,
       )}
     >
       {showImage ? (
