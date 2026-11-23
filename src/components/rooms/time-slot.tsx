@@ -19,7 +19,7 @@ export type TimeSlotGroupProps = {
 };
 
 const timeSlotStyles = cva(
-  "inline-flex h-10 w-[132px] items-center justify-center gap-1 px-4 py-2  rounded-md border transition-colors",
+  "inline-flex h-10 w-[132px] items-center justify-center gap-1 px-2 py-2  rounded-md border transition-colors",
   {
     variants: {
       state: {
@@ -53,7 +53,7 @@ export function TimeSlot({
       aria-label={`${start} to ${end}${isUnavailable ? ", unavailable" : ""}`}
     >
       {state === "selected" && <Icon name="check" size={14} />}
-      <span className="text-label-md">
+      <span className="text-label-md whitespace-nowrap">
         {start} - {end}
       </span>
     </button>
