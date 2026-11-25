@@ -13,13 +13,22 @@ export function roomDisplayName(room: Pick<Room, "name" | "code">): string {
 }
 
 /** Short capacity label for room cards. */
-export function capacityLabel(room: Pick<Room, "capacity" | "bookingType">): string {
+export function capacityLabel(
+  room: Pick<Room, "capacity" | "bookingType">,
+): string {
   if (room.bookingType === "SEAT_LEVEL") return `${room.capacity} seats`;
   return room.capacity === 1 ? "1 person" : `Up to ${room.capacity} people`;
 }
 
+/** Can this room have individual seats? */
+export function canHaveSeats(room: Pick<Room, "bookingType">): boolean {
+  return room.bookingType === "SEAT_LEVEL";
+}
+
 /** Rooms grouped by floor, floors ascending. */
-export function groupByFloor(rooms: Room[]): { floorNumber: number; rooms: Room[] }[] {
+export function groupByFloor(
+  rooms: Room[],
+): { floorNumber: number; rooms: Room[] }[] {
   const byFloor = new Map<number, Room[]>();
   for (const room of rooms) {
     const list = byFloor.get(room.floorNumber) ?? [];
@@ -32,8 +41,11 @@ export function groupByFloor(rooms: Room[]): { floorNumber: number; rooms: Room[
 }
 
 /** Can this room be taken out of service? */
-export function canDeactivate(room: Pick<Room, "isActive">): { ok: true } | { ok: false; reason: string } {
-  if (!room.isActive) return { ok: false, reason: "This room is already inactive." };
+export function canDeactivate(
+  room: Pick<Room, "isActive">,
+): { ok: true } | { ok: false; reason: string } {
+  if (!room.isActive)
+    return { ok: false, reason: "This room is already inactive." };
   // TODO(bookings): refuse if the room has upcoming confirmed bookings.
   return { ok: true };
 }

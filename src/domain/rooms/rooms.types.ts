@@ -23,6 +23,13 @@ export type Room = {
   isActive: boolean;
 };
 
+export type Seat = {
+  id: string;
+  roomId: string;
+  number: number;
+  isActive: boolean;
+};
+
 // ─── DTOs ────────────────────────────────────────────────────────────────────
 
 export type RoomCardDto = {
@@ -31,6 +38,12 @@ export type RoomCardDto = {
   displayName: string;
   capacityLabel: string;
   bookingType: BookingType;
+};
+
+export type SeatDto = {
+  id: string;
+  number: number;
+  isActive: boolean;
 };
 
 export type FloorDto = {

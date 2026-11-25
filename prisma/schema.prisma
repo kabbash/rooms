@@ -39,8 +39,21 @@ model Room {
   sortOrder   Int         @default(0)
   floorId     String
   floor       Floor       @relation(fields: [floorId], references: [id])
+  seats       Seat[]
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
+}
+
+model Seat {
+  id        String   @id @default(cuid())
+  roomId    String
+  number    Int
+  isActive  Boolean  @default(true)
+  room      Room     @relation(fields: [roomId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([roomId, number])
 }
 
 // TODO(bookings): model Booking { ... }      — see docs/adr/0001-app-structure.md

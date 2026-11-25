@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { canDeactivate, capacityLabel, groupByFloor, roomDisplayName } from "./rooms.rules";
+import {
+  canDeactivate,
+  capacityLabel,
+  groupByFloor,
+  roomDisplayName,
+  canHaveSeats,
+} from "./rooms.rules";
 import type { Room } from "./rooms.types";
 
 const room = (overrides: Partial<Room> = {}): Room => ({
@@ -19,17 +25,23 @@ describe("roomDisplayName", () => {
   });
 
   it("falls back to the code when there is no name", () => {
-    expect(roomDisplayName(room({ name: null, code: "Silent Box 1" }))).toBe("Silent Box 1");
+    expect(roomDisplayName(room({ name: null, code: "Silent Box 1" }))).toBe(
+      "Silent Box 1",
+    );
   });
 });
 
 describe("capacityLabel", () => {
   it("talks about seats for seat-level rooms", () => {
-    expect(capacityLabel(room({ bookingType: "SEAT_LEVEL", capacity: 10 }))).toBe("10 seats");
+    expect(
+      capacityLabel(room({ bookingType: "SEAT_LEVEL", capacity: 10 })),
+    ).toBe("10 seats");
   });
 
   it("handles single occupants", () => {
-    expect(capacityLabel(room({ bookingType: "SINGLE_OCCUPANT", capacity: 1 }))).toBe("1 person");
+    expect(
+      capacityLabel(room({ bookingType: "SINGLE_OCCUPANT", capacity: 1 })),
+    ).toBe("1 person");
   });
 });
 
@@ -52,5 +64,16 @@ describe("canDeactivate", () => {
 
   it("refuses a room that is already inactive", () => {
     expect(canDeactivate(room({ isActive: false })).ok).toBe(false);
+  });
+});
+
+describe("canHaveSeats", () => {
+  it("allows seats in seat-level rooms", () => {
+    expect(canHaveSeats(room({ bookingType: "SEAT_LEVEL" }))).toBe(true);
+  });
+
+  it("rejects seats in non-seat-level rooms", () => {
+    expect(canHaveSeats(room({ bookingType: "WHOLE_ROOM" }))).toBe(false);
+    expect(canHaveSeats(room({ bookingType: "SINGLE_OCCUPANT" }))).toBe(false);
   });
 });
